@@ -1,7 +1,9 @@
---
+-- ddd
+
+DROP TRIGGER IF EXISTS reduce_quantity;
 
 DELIMITER //
-CREATE TRIGGER IF NOT EXISTS item_decrease_quantity
+CREATE TRIGGER item_decrease_quantity
     AFTER INSERT ON orders
     FOR EACH ROW
 BEGIN
