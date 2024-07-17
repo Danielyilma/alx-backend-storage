@@ -21,7 +21,7 @@ def count_calls(method: Callable) -> Callable:
     return wrapper
 
 
-def call_history(method: Callable):
+def call_history(method: Callable) -> Callable:
     '''
         stores a history calles of a function
     '''
