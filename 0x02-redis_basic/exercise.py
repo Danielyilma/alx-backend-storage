@@ -76,12 +76,12 @@ class Cache:
         return str(self._redis.get(key))
 
 
-def replay(func: Callable) -> None:
+def replay(fn: Callable) -> None:
     '''
         replay the history of a function includes
         function name , inputs and outputs from this function
     '''
-    key = func.__qualname__
+    key = fn.__qualname__
 
     _redis = redis.Redis()
     count = _redis.get(key).decode("utf-8")
