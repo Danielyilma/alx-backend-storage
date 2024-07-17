@@ -29,7 +29,3 @@ def count_access(func: Callable) -> Callable:
 def get_page(url: str) -> str:
     '''takes a url and return the page from that url'''
     return (requests.get(url)).text
-
-
-if __name__ == "__main__":
-    print(get_page("https://www.youtube.com"))
