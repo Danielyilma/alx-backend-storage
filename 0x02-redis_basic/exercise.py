@@ -6,17 +6,17 @@ import uuid
 from functools import wraps
 
 
-def count_calls(func: Callable) -> Callable:
+def count_calls(method: Callable) -> Callable:
     '''
         decorator that counts the number of time a function is called
     '''
-    @wraps(func)
+    @wraps(method)
     def func2(self, *args, **kwargs):
         '''
             wraped function that counts and call the main function
         '''
-        self._redis.incr(func.__qualname__)
-        return func(self, *args, **kwargs)
+        self._redis.incr(method.__qualname__)
+        return method(self, *args, **kwargs)
 
     return func2
 
