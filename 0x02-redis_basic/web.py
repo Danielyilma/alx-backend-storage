@@ -15,7 +15,7 @@ def count_access(func: Callable) -> Callable:
         _redis.incr(key)
         result = _redis.get(f"cached{str(*args)}")
         if result:
-            return result
+            return result.decode("utf-8")
         text = func(*args)
         _redis.setex(f"cached{str(*args)}", 10, text)
         return text
@@ -27,6 +27,7 @@ def count_access(func: Callable) -> Callable:
 def get_page(url: str) -> str:
     '''takes a url and return the page from that url'''
     return (requests.get(url)).text
+
 
 if __name__ == "__main__":
     print(get_page("https://www.youtube.com"))
