@@ -80,7 +80,7 @@ def replay(func: Callable) -> None:
     key = func.__qualname__
 
     _redis = redis.Redis()
-    count = _redis.get(key).decode()
+    count = _redis.get(key).decode("utf-8")
     outputs = _redis.lrange(key + ":outputs", 0, -1)
     inputs = _redis.lrange(key + ":inputs", 0, -1)
 
@@ -88,5 +88,5 @@ def replay(func: Callable) -> None:
 
     for inp, out in zip(inputs, outputs):
         print("{}(*{}) -> {}".format(
-            key, inp.decode(), out.decode()
+            key, inp.decode("utf-8"), out.decode("utf-8")
         ))
