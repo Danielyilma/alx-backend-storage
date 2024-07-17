@@ -22,10 +22,14 @@ def count_calls(method: Callable) -> Callable:
 
 
 def call_history(method: Callable):
-    '''stores a history calles of a function'''
+    '''
+        stores a history calles of a function
+    '''
     @wraps(method)
     def method2(self, *args, **kwargs):
-        '''wrapped function'''
+        '''
+            wrapped function
+        '''
         key = method.__qualname__
         self._redis.rpush(key + ":inputs", str(args))
         result = method(self, *args, **kwargs)
