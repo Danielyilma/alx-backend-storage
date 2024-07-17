@@ -11,14 +11,14 @@ def count_calls(method: Callable) -> Callable:
         decorator that counts the number of time a function is called
     '''
     @wraps(method)
-    def func2(self, *args, **kwargs):
+    def wrapper(self, *args, **kwargs):
         '''
             wraped function that counts and call the main function
         '''
         self._redis.incr(method.__qualname__)
         return method(self, *args, **kwargs)
 
-    return func2
+    return wrapper
 
 
 def call_history(method: Callable):
@@ -48,8 +48,8 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb(True)
 
-    @call_history
     @count_calls
+    @call_history
     def store(self, data: Union[int, float, str, bytes]) -> str:
         '''stores in redis database'''
         random_num = str(uuid.uuid4())
