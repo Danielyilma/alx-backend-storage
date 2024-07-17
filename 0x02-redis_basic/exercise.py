@@ -61,7 +61,7 @@ class Cache:
         return str(self._redis.get(key))
 
 
-def replay(func):
+def replay(func: callable) -> None:
     '''
     replay the history of a function includes
     function name , inputs and outputs from this function

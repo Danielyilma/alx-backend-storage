@@ -5,7 +5,7 @@ import redis
 import requests
 
 
-def count_access(func):
+def count_access(func: callable) -> callable:
     '''a wrapper function for couting access to a function'''
     def func2(*args):
         '''wrapped function'''
