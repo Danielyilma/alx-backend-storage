@@ -69,9 +69,10 @@ class Cache:
 
 
 def replay(func: Callable) -> None:
+    # sourcery skip: use-fstring-for-concatenation, use-fstring-for-formatting
     '''
-    replay the history of a function includes
-    function name , inputs and outputs from this function
+        replay the history of a function includes
+        function name , inputs and outputs from this function
     '''
     key = func.__qualname__
 
