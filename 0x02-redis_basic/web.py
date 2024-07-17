@@ -10,16 +10,20 @@ _redis = redis.Redis()
 
 
 def count_access(func: Callable) -> Callable:
-    '''a wrapper function for couting access to a function'''
+    '''
+        a wrapper function for couting access to a function
+    '''
     def func2(*args):
-        '''wrapped function'''
+        '''
+            wrapped function
+        '''
         key = "count:" + str(*args)
-        result = _redis.get(f"cached{str(*args)}")
+        _redis.incr(key)
+        result = _redis.get(f"cached:{str(*args)}")
         if result:
             return result.decode("utf-8")
-        _redis.incr(key)
         text = func(*args)
-        _redis.setex(f"cached{str(*args)}", 10, text)
+        _redis.setex(f"cached:{str(*args)}", 10, text)
         return text
 
     return func2
