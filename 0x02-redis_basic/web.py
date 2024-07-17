@@ -4,6 +4,7 @@ from functools import wraps
 import redis
 import requests
 
+
 def count_access(func):
     '''a wrapper function for couting access to a function'''
     def func2(*args):
@@ -16,12 +17,12 @@ def count_access(func):
 
     return func2
 
+
 @count_access
 def get_page(url: str) -> str:
     '''takes a url and return the page from that url'''
-    return requests.get(url)
+    return (requests.get(url)).text
 
 
 if __name__ == "__main__":
-    get_page("http://google.com")
-
+    print(get_page("http://google.com"))

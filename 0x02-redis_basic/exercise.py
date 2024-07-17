@@ -5,6 +5,7 @@ from typing import Union
 import uuid
 from functools import wraps
 
+
 class Cache:
     '''cache class'''
 
@@ -20,16 +21,17 @@ class Cache:
             '''wraped function that counts and call the main function'''
             self._redis.incr(func.__qualname__)
             return func(self, *args, **kwargs)
-        
-        return func2
-    
-    def call_history(method: callable):
 
+        return func2
+
+    def call_history(method: callable):
+        '''stores a history calles of a function'''
         @wraps(method)
         def method2(self, *args, **kwargs):
+            '''wrapped function'''
             key = method.__qualname__
             self._redis.rpush(key + ":inputs", str(args))
-            result  = method(self, *args, **kwargs)
+            result = method(self, *args, **kwargs)
             self._redis.rpush(key + ":outputs", str(result))
             return result
 
@@ -43,22 +45,25 @@ class Cache:
         self._redis.set(random_num, data)
         return random_num
 
-    def get(self, key: str, fn: Union[callable, None]=None) -> Union[int, float, str, bytes]:
+    def get(self, key: str, fn: Union[callable, None] = None) \
+            -> Union[int, float, str, bytes]:
+        '''get data from redis database'''
         result = self._redis.get(key)
 
         if fn is None:
             return result
         return fn(result)
-    
+
     def get_int(self, key: str) -> int:
         return int(self._redis.get(key))
-    
+
     def get_str(self, key: str) -> str:
         return str(self._redis.get(key))
 
+
 def replay(func):
     '''
-    replay the history of a function includes 
+    replay the history of a function includes
     function name , inputs and outputs from this function
     '''
     key = func.__qualname__
@@ -67,10 +72,8 @@ def replay(func):
     count = _redis.get(key).decode()
     outputs = _redis.lrange(key + ":outputs", 0, -1)
     inputs = _redis.lrange(key + ":inputs", 0, -1)
-    
+
     print(f"{key} was called {count} times:")
 
     for inp, out in zip(inputs, outputs):
-        print(f"{key}(*{inp.decode()}) -> {out.decode()}") 
-
-    
+        print(f"{key}(*{inp.decode()}) -> {out.decode()}")
