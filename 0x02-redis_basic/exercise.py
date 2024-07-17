@@ -7,28 +7,32 @@ from functools import wraps
 
 
 def count_calls(func: Callable) -> Callable:
-        '''decorator that counts the number of time a function is called'''
-        @wraps(func)
-        def func2(self, *args, **kwargs):
-            '''wraped function that counts and call the main function'''
-            self._redis.incr(func.__qualname__)
-            return func(self, *args, **kwargs)
+    '''
+        decorator that counts the number of time a function is called
+    '''
+    @wraps(func)
+    def func2(self, *args, **kwargs):
+        '''
+            wraped function that counts and call the main function
+        '''
+        self._redis.incr(func.__qualname__)
+        return func(self, *args, **kwargs)
 
-        return func2
+    return func2
 
 
 def call_history(method: Callable):
-        '''stores a history calles of a function'''
-        @wraps(method)
-        def method2(self, *args, **kwargs):
-            '''wrapped function'''
-            key = method.__qualname__
-            self._redis.rpush(key + ":inputs", str(args))
-            result = method(self, *args, **kwargs)
-            self._redis.rpush(key + ":outputs", str(result))
-            return result
+    '''stores a history calles of a function'''
+    @wraps(method)
+    def method2(self, *args, **kwargs):
+        '''wrapped function'''
+        key = method.__qualname__
+        self._redis.rpush(key + ":inputs", str(args))
+        result = method(self, *args, **kwargs)
+        self._redis.rpush(key + ":outputs", str(result))
+        return result
 
-        return method2
+    return method2
 
 
 class Cache:

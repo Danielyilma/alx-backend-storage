@@ -3,9 +3,10 @@
 from functools import wraps
 import redis
 import requests
+from typing import Callable
 
 
-def count_access(func: callable) -> callable:
+def count_access(func: Callable) -> Callable:
     '''a wrapper function for couting access to a function'''
     def func2(*args):
         '''wrapped function'''
