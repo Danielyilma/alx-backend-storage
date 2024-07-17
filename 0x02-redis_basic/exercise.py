@@ -6,15 +6,7 @@ import uuid
 from functools import wraps
 
 
-class Cache:
-    '''cache class'''
-
-    def __init__(self) -> None:
-        '''initialize class attribute'''
-        self._redis = redis.Redis()
-        self._redis.flushdb()
-
-    def count_calls(func: callable) -> callable:
+def count_calls(func: callable) -> callable:
         '''decorator that counts the number of time a function is called'''
         @wraps(func)
         def func2(self, *args, **kwargs):
@@ -24,7 +16,8 @@ class Cache:
 
         return func2
 
-    def call_history(method: callable):
+
+def call_history(method: callable):
         '''stores a history calles of a function'''
         @wraps(method)
         def method2(self, *args, **kwargs):
@@ -36,6 +29,15 @@ class Cache:
             return result
 
         return method2
+
+
+class Cache:
+    '''cache class'''
+
+    def __init__(self) -> None:
+        '''initialize class attribute'''
+        self._redis = redis.Redis()
+        self._redis.flushdb(True)
 
     @call_history
     @count_calls
