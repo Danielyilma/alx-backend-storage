@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 '''creating a cache with redis database'''
 import redis
-from typing import Union
+from typing import Union, Callable
 import uuid
 from functools import wraps
 
 
-def count_calls(func: callable) -> callable:
+def count_calls(func: Callable) -> Callable:
         '''decorator that counts the number of time a function is called'''
         @wraps(func)
         def func2(self, *args, **kwargs):
@@ -17,7 +17,7 @@ def count_calls(func: callable) -> callable:
         return func2
 
 
-def call_history(method: callable):
+def call_history(method: Callable):
         '''stores a history calles of a function'''
         @wraps(method)
         def method2(self, *args, **kwargs):
@@ -32,8 +32,9 @@ def call_history(method: callable):
 
 
 class Cache:
-    '''cache class'''
-
+    '''
+        cache class
+    '''
     def __init__(self) -> None:
         '''initialize class attribute'''
         self._redis = redis.Redis()
@@ -47,7 +48,7 @@ class Cache:
         self._redis.set(random_num, data)
         return random_num
 
-    def get(self, key: str, fn: Union[callable, None] = None) \
+    def get(self, key: str, fn: Union[Callable, None] = None) \
             -> Union[int, float, str, bytes]:
         '''get data from redis database'''
         result = self._redis.get(key)
@@ -63,7 +64,7 @@ class Cache:
         return str(self._redis.get(key))
 
 
-def replay(func: callable) -> None:
+def replay(func: Callable) -> None:
     '''
     replay the history of a function includes
     function name , inputs and outputs from this function
