@@ -39,6 +39,26 @@ def call_history(method: Callable) -> Callable:
     return wrapper
 
 
+def replay(fn: Callable) -> None:
+    '''
+        replay the history of a function includes
+        function name , inputs and outputs from this function
+    '''
+    key = fn.__qualname__
+
+    _redis = redis.Redis()
+    count = _redis.get(key).decode("utf-8")
+    outputs = _redis.lrange(key + ":outputs", 0, -1)
+    inputs = _redis.lrange(key + ":inputs", 0, -1)
+
+    print(f"{key} was called {count} times:")
+
+    for inp, out in zip(inputs, outputs):
+        print("{}(*{}) -> {}".format(
+            key, inp.decode("utf-8"), out.decode("utf-8")
+        ))
+
+
 class Cache:
     '''
         cache class
@@ -74,23 +94,3 @@ class Cache:
 
     def get_str(self, key: str) -> str:
         return str(self._redis.get(key))
-
-
-def replay(fn: Callable) -> None:
-    '''
-        replay the history of a function includes
-        function name , inputs and outputs from this function
-    '''
-    key = fn.__qualname__
-
-    _redis = redis.Redis()
-    count = _redis.get(key).decode("utf-8")
-    outputs = _redis.lrange(key + ":outputs", 0, -1)
-    inputs = _redis.lrange(key + ":inputs", 0, -1)
-
-    print(f"{key} was called {count} times:")
-
-    for inp, out in zip(inputs, outputs):
-        print("{}(*{}) -> {}".format(
-            key, inp.decode("utf-8"), out.decode("utf-8")
-        ))
