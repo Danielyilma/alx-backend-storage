@@ -1,31 +1,32 @@
 #!/usr/bin/env python3
-'''an expiring web cache and tracker'''
+""" Redis Module """
+
 from functools import wraps
 import redis
 import requests
 from typing import Callable
 
-
-_redis = redis.Redis()
-
-
-def count_access(func: Callable) -> Callable:
-    '''a wrapper function for couting access to a function'''
-    def func2(*args):
-        '''wrapped function'''
-        key = "count:" + str(*args)
-        _redis.incr(key)
-        result = _redis.get(f"cached{str(*args)}")
-        if result:
-            return result.decode("utf-8")
-        text = func(*args)
-        _redis.setex(f"cached{str(*args)}", 10, text)
-        return text
-
-    return func2
+redis_ = redis.Redis()
 
 
-@count_access
+def count_requests(method: Callable) -> Callable:
+    """ Decortator for counting """
+    @wraps(method)
+    def wrapper(url):  # sourcery skip: use-named-expression
+        """ Wrapper for decorator """
+        redis_.incr(f"count:{url}")
+        cached_html = redis_.get(f"cached:{url}")
+        if cached_html:
+            return cached_html.decode('utf-8')
+        html = method(url)
+        redis_.setex(f"cached:{url}", 10, html)
+        return html
+
+    return wrapper
+
+
+@count_requests
 def get_page(url: str) -> str:
-    '''takes a url and return the page from that url'''
-    return (requests.get(url)).text
+    """ Obtain the HTML content of a  URL """
+    req = requests.get(url)
+    return req.text
