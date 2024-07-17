@@ -26,7 +26,7 @@ def call_history(method: Callable):
         stores a history calles of a function
     '''
     @wraps(method)
-    def method2(self, *args, **kwargs):
+    def wrapper(self, *args, **kwargs):
         '''
             wrapped function
         '''
@@ -36,7 +36,7 @@ def call_history(method: Callable):
         self._redis.rpush(key + ":outputs", str(result))
         return result
 
-    return method2
+    return wrapper
 
 
 class Cache:
