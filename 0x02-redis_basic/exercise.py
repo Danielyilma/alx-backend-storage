@@ -13,6 +13,17 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    def count_calls(func: callable):
+        '''decorator that counts the number of time a function is called'''
+        @wraps(func)
+        def func2(self, *args, **kwargs):
+            '''wraped function that counts and call the main function'''
+            self._redis.incr(func.__qualname__)
+            return func(self, *args, **kwargs)
+        
+        return func2
+
+    @count_calls
     def store(self, data: Union[int, float, str, bytes]) -> str:
         '''stores in redis database'''
         random_num = str(uuid.uuid4())
@@ -32,11 +43,4 @@ class Cache:
     def get_str(self, key: str) -> str:
         return str(self._redis.get(key))
 
-    def count_calls(self, func):
-
-        @wraps(func)
-        def func2(*args, **kwargs):
-            func(*args, **kwargs)
-        
-        return func2
     
