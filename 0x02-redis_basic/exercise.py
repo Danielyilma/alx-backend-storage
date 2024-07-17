@@ -9,7 +9,7 @@ from functools import wraps
 class Cache:
     '''cache class'''
 
-    def __init__(self):
+    def __init__(self) -> None:
         '''initialize class attribute'''
         self._redis = redis.Redis()
         self._redis.flushdb()
