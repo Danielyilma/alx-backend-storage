@@ -6,12 +6,14 @@ import requests
 from typing import Callable
 
 
+_redis = redis.Redis()
+
+
 def count_access(func: Callable) -> Callable:
     '''a wrapper function for couting access to a function'''
     def func2(*args):
         '''wrapped function'''
         key = "count:" + str(*args)
-        _redis = redis.Redis()
         _redis.incr(key)
         result = _redis.get(f"cached{str(*args)}")
         if result:
