@@ -39,7 +39,7 @@ def call_history(method: Callable) -> Callable:
     return wrapper
 
 
-def replay(fn: Callable) -> None:
+def replay(fn: Callable):
     '''
         replay the history of a function includes
         function name , inputs and outputs from this function
